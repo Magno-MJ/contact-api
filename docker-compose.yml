@@ -1,0 +1,44 @@
+services:
+  backend:
+    container_name: contact-api-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080 #porta da aplicacao
+    volumes:
+      - .:/app
+    networks:
+      - contact-api
+
+  postgres:
+    container_name: "contact-api-database"
+    image: postgres
+    volumes:
+      - contact-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "contact"
+      POSTGRES_PASSWORD: "contact"
+      POSTGRES_DB: "contact-db"
+    ports:
+      - "5429:5432"
+    networks:
+      - contact-api
+
+  mailhog:
+    container_name: "contact-api-mailhog"
+    image: mailhog/mailhog
+    logging:
+      driver: 'none'  # disable saving logs
+    ports:
+      - 1025:1025 # smtp server
+      - 8025:8025 # web ui
+    networks:
+      - contact-api
+
+networks:
+  contact-api:
+    name: contact-api-network
+
+volumes:
+  contact-db-data:
