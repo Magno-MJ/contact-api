@@ -200,7 +200,6 @@ public class AuthServiceTest {
     verify(accountConfirmationTokenRepository, times(1)).disableByToken(confirmationToken);
   }
 
-
   @Test
   @DisplayName("Should resend confirmation token successfully")
   void resendAccountConfirmationTokenCase1() {
@@ -221,7 +220,6 @@ public class AuthServiceTest {
     verify(accountConfirmationTokenRepository, times(1)).save(new AccountConfirmationToken(confirmationToken, login, true));
     verify(emailService, times(1)).sendAccountConfirmationMail(login.getEmail(), confirmationToken);
   }
-
 
   @Test
   @DisplayName("Should throw if the login was not found")
