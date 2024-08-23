@@ -1,6 +1,5 @@
 package com.study.contactapi.services;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,7 @@ public class ContactService {
     return new ContactResponseDTO(contactFound);
   }
 
-  public ContactResponseDTO updateContactById(String contactId, String userId, UpdateContactBodyDTO updateContactBodyDTO) throws IllegalArgumentException, IOException {
+  public ContactResponseDTO updateContactById(String contactId, String userId, UpdateContactBodyDTO updateContactBodyDTO) {
     Contact contactFound = this.contactRepository.findByIdAndUserId(contactId, userId).orElseThrow(() -> new ContactNotFoundException());
 
     Contact updatedContact = this.contactRepository.save(this.dataMerger.mergeData(contactFound, updateContactBodyDTO));
