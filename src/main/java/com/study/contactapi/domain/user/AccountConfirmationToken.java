@@ -2,6 +2,7 @@ package com.study.contactapi.domain.user;
 
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class AccountConfirmationToken {
     @Id()
     @GeneratedValue(strategy = GenerationType.UUID)
