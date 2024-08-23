@@ -47,7 +47,7 @@ public class AuthService {
       throw new AccountNotActivatedException();
     }
 
-    if(passwordEncoder.matches(body.password(), login.getPassword())) {
+    if (passwordEncoder.matches(body.password(), login.getPassword())) {
       String token = this.tokenService.generateToken(login);
 
       return ResponseEntity.ok(new LoginResponseDTO(token));
