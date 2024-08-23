@@ -23,9 +23,9 @@ public class AuthController {
 
   @PostMapping("/login")
   public ResponseEntity<LoginResponseDTO> login(@Validated @RequestBody LoginBodyDTO loginBodyDto){
-    ResponseEntity<LoginResponseDTO> loginResponseDto = this.authService.login(loginBodyDto);
+    LoginResponseDTO loginResponseDto = this.authService.login(loginBodyDto);
 
-    return loginResponseDto;
+    return ResponseEntity.ok(loginResponseDto);
   }
 
   @PostMapping("/confirm/{accountConfirmationToken}")
