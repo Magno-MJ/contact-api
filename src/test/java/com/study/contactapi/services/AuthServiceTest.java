@@ -19,10 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.study.contactapi.domain.user.AccountConfirmationToken;
 import com.study.contactapi.domain.user.Login;
 import com.study.contactapi.dto.LoginBodyDTO;
 import com.study.contactapi.dto.LoginResponseDTO;
 import com.study.contactapi.http.exceptions.AccountNotActivatedException;
+import com.study.contactapi.http.exceptions.ConfirmationTokenIsNotActiveException;
+import com.study.contactapi.http.exceptions.ConfirmationTokenNotFoundException;
+import com.study.contactapi.http.exceptions.InvalidTokenException;
 import com.study.contactapi.http.exceptions.UserNotFoundException;
 import com.study.contactapi.http.exceptions.WrongCredentialsException;
 import com.study.contactapi.infra.security.TokenService;
@@ -134,5 +138,64 @@ public class AuthServiceTest {
     Exception exception = Assertions.assertThrows(WrongCredentialsException.class, () -> this.authService.login(loginBodyDTO));
     
     Assertions.assertEquals("The credentials are wrong", exception.getMessage());
+  }
+
+  @Test
+  @DisplayName("Should confirm account successfully")
+  void confirmAccountCase1() {
+    String confirmationToken = "fake-confirmation-token";
+    String loginId = "fake-login-id";
+    
+    when(accountConfirmationTokenRepository.findByToken(confirmationToken)).thenReturn(new AccountConfirmationToken());
+    when(tokenService.validateToken(confirmationToken)).thenReturn(loginId);
+
+    this.authService.confirmAccount(confirmationToken);
+
+    verify(accountConfirmationTokenRepository, times(1)).findByToken(confirmationToken);
+    verify(tokenService, times(1)).validateToken(confirmationToken);
+    verify(loginRepository, times(1)).activateUserLoginById(loginId);
+    verify(accountConfirmationTokenRepository, times(1)).disableByToken(confirmationToken);
+  }
+
+  @Test
+  @DisplayName("Should throw if the account confirmation token was not found")
+  void confirmAccountCase2() {
+    String confirmationToken = "fake-confirmation-token";
+    
+    when(accountConfirmationTokenRepository.findByToken(confirmationToken)).thenReturn(null);
+    
+    Exception exception = Assertions.assertThrows(ConfirmationTokenNotFoundException.class, () -> this.authService.confirmAccount(confirmationToken));
+    
+    Assertions.assertEquals("Confirmation token not found", exception.getMessage());
+  }
+
+  @Test
+  @DisplayName("Should throw if the account confirmation token is not active")
+  void confirmAccountCase3() {
+    String confirmationToken = "fake-confirmation-token";
+    
+    AccountConfirmationToken accountConfirmationToken = new AccountConfirmationToken();
+    accountConfirmationToken.set_active(false);
+
+    when(accountConfirmationTokenRepository.findByToken(confirmationToken)).thenReturn(accountConfirmationToken);
+    
+    Exception exception = Assertions.assertThrows(ConfirmationTokenIsNotActiveException.class, () -> this.authService.confirmAccount(confirmationToken));
+    
+    Assertions.assertEquals("Confirmation token is not active", exception.getMessage());
+  }
+
+  @Test
+  @DisplayName("Should throw if the login was not found")
+  void confirmAccountCase4() {
+    String confirmationToken = "fake-confirmation-token";
+    
+    when(accountConfirmationTokenRepository.findByToken(confirmationToken)).thenReturn(new AccountConfirmationToken());
+    when(tokenService.validateToken(confirmationToken)).thenReturn(null);
+    
+    Exception exception = Assertions.assertThrows(InvalidTokenException.class, () -> this.authService.confirmAccount(confirmationToken));
+    
+    Assertions.assertEquals("Invalid token", exception.getMessage());
+
+    verify(accountConfirmationTokenRepository, times(1)).disableByToken(confirmationToken);
   }
 }
