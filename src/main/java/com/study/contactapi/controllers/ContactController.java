@@ -1,6 +1,5 @@
 package com.study.contactapi.controllers;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +54,7 @@ public class ContactController {
     @PathVariable String contactId, 
     @AuthenticationPrincipal User user, 
     @Validated @RequestBody UpdateContactBodyDTO updateContactBodyDto
-  ) throws IllegalArgumentException, IOException  {
+  ) {
     ContactResponseDTO contactFound =  contactService.updateContactById(contactId, user.getId(), updateContactBodyDto);
 
     return new ResponseEntity<>(contactFound, HttpStatus.CREATED);
