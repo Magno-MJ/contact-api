@@ -5,9 +5,11 @@ import java.util.Date;
 
 import com.study.contactapi.domain.user.Contact;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode
 public class ContactResponseDTO {
   private String id; 
   private String contact_user_id; 

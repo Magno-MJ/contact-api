@@ -1,4 +1,10 @@
 package com.study.contactapi.dto;
 
-public record LoginResponseDTO (String token){
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode
+@AllArgsConstructor
+public class LoginResponseDTO {
+  private String token;
 }
