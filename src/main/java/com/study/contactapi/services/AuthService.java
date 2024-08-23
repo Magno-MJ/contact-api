@@ -1,7 +1,6 @@
 package com.study.contactapi.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,7 +39,7 @@ public class AuthService {
   private PasswordEncoder passwordEncoder;
 
 
-  public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginBodyDTO body){
+  public LoginResponseDTO login(@RequestBody LoginBodyDTO body){
     Login login = this.loginRepository.findByEmail(body.email()).orElseThrow(() -> new UserNotFoundException());
     
     if (login.getAccount_activated_at() == null) {
@@ -50,7 +49,7 @@ public class AuthService {
     if (passwordEncoder.matches(body.password(), login.getPassword())) {
       String token = this.tokenService.generateToken(login);
 
-      return ResponseEntity.ok(new LoginResponseDTO(token));
+      return new LoginResponseDTO(token);
     }
 
     throw new WrongCredentialsException();
