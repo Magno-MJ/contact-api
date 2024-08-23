@@ -16,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.study.contactapi.domain.user.AccountConfirmationToken;
@@ -80,13 +79,13 @@ public class AuthServiceTest {
 
     LoginBodyDTO loginBodyDTO = new LoginBodyDTO(email, password);
 
-    ResponseEntity<LoginResponseDTO> loginResponseDto = this.authService.login(loginBodyDTO);
+    LoginResponseDTO loginResponseDto = this.authService.login(loginBodyDTO);
 
     verify(loginRepository, times(1)).findByEmail(email);
     verify(passwordEncoder, times(1)).matches(password, password);
     verify(tokenService, times(1)).generateToken(login);
 
-    assertThat(loginResponseDto.getBody()).isEqualTo(new LoginResponseDTO(token));
+    assertThat(loginResponseDto).isEqualTo(new LoginResponseDTO(token));
   }
 
   @Test
