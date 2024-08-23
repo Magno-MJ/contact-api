@@ -13,12 +13,12 @@ public interface AccountConfirmationTokenRepository extends JpaRepository<Accoun
     AccountConfirmationToken findByToken(String token);
 
     @Transactional
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE account_confirmation_token SET is_active = false WHERE token = ?1 AND is_active = true", nativeQuery = true)
     void disableByToken(String token);
 
     @Transactional
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE account_confirmation_token SET is_active = false WHERE login_id = ?1 AND is_active = true", nativeQuery = true)
     void disableByLoginId(String loginId);
 }

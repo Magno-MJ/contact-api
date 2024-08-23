@@ -14,7 +14,7 @@ public interface LoginRepository extends JpaRepository<Login, String>{
   Optional<Login> findByEmail(String email);
   
   @Transactional  
-  @Modifying
+  @Modifying(clearAutomatically = true)
   @Query(value = "UPDATE login SET account_activated_at = NOW() WHERE id = ?1", nativeQuery = true)
   void activateUserLoginById(String id);
 }
