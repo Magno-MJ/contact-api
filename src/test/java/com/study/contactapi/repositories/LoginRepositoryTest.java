@@ -30,7 +30,6 @@ public class LoginRepositoryTest {
 
     Login activatedLogin =  this.loginRepository.findById(login.getId()).get();
 
-    System.out.println(activatedLogin);
     assertThat(activatedLogin.getAccount_activated_at()).isToday();
   }
 
