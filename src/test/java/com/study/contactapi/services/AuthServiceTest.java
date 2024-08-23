@@ -23,6 +23,7 @@ import com.study.contactapi.domain.user.AccountConfirmationToken;
 import com.study.contactapi.domain.user.Login;
 import com.study.contactapi.dto.LoginBodyDTO;
 import com.study.contactapi.dto.LoginResponseDTO;
+import com.study.contactapi.dto.ResendAccountConfirmationTokenBodyDto;
 import com.study.contactapi.http.exceptions.AccountNotActivatedException;
 import com.study.contactapi.http.exceptions.ConfirmationTokenIsNotActiveException;
 import com.study.contactapi.http.exceptions.ConfirmationTokenNotFoundException;
@@ -188,7 +189,7 @@ public class AuthServiceTest {
   @DisplayName("Should throw if the login was not found")
   void confirmAccountCase4() {
     String confirmationToken = "fake-confirmation-token";
-    
+
     when(accountConfirmationTokenRepository.findByToken(confirmationToken)).thenReturn(new AccountConfirmationToken());
     when(tokenService.validateToken(confirmationToken)).thenReturn(null);
     
@@ -197,5 +198,41 @@ public class AuthServiceTest {
     Assertions.assertEquals("Invalid token", exception.getMessage());
 
     verify(accountConfirmationTokenRepository, times(1)).disableByToken(confirmationToken);
+  }
+
+
+  @Test
+  @DisplayName("Should resend confirmation token successfully")
+  void resendAccountConfirmationTokenCase1() {
+    Login login = new Login();
+    ResendAccountConfirmationTokenBodyDto resendAccountConfirmationTokenBodyDto = new ResendAccountConfirmationTokenBodyDto("fake@mail.com");
+    String confirmationToken = "fake-confirmation-token";
+    String loginId = login.getId();
+
+    when(loginRepository.findByEmail(resendAccountConfirmationTokenBodyDto.email())).thenReturn(Optional.of(login));
+    when(tokenService.generateConfirmationToken(login.getId())).thenReturn(confirmationToken);
+
+
+    this.authService.resendAccountConfirmationToken(resendAccountConfirmationTokenBodyDto);
+
+    verify(loginRepository, times(1)).findByEmail(resendAccountConfirmationTokenBodyDto.email());
+    verify(tokenService, times(1)).generateConfirmationToken(loginId);
+    verify(accountConfirmationTokenRepository, times(1)).disableByLoginId(loginId);
+    verify(accountConfirmationTokenRepository, times(1)).save(new AccountConfirmationToken(confirmationToken, login, true));
+    verify(emailService, times(1)).sendAccountConfirmationMail(login.getEmail(), confirmationToken);
+  }
+
+
+  @Test
+  @DisplayName("Should throw if the login was not found")
+  void resendAccountConfirmationTokenCase2() {
+    ResendAccountConfirmationTokenBodyDto resendAccountConfirmationTokenBodyDto = new ResendAccountConfirmationTokenBodyDto("fake@mail.com");
+
+    when(loginRepository.findByEmail(resendAccountConfirmationTokenBodyDto.email())).thenReturn(Optional.empty());
+
+    Exception exception = Assertions.assertThrows(UserNotFoundException.class, () -> this.authService.resendAccountConfirmationToken(resendAccountConfirmationTokenBodyDto));
+    
+    Assertions.assertEquals("User not found", exception.getMessage());
+    ;
   }
 }
