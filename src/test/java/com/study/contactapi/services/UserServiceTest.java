@@ -6,7 +6,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Date;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -24,9 +23,6 @@ import com.study.contactapi.domain.user.Login;
 import com.study.contactapi.domain.user.User;
 import com.study.contactapi.dto.CreateUserBodyDTO;
 import com.study.contactapi.dto.CreatedUserResponseDTO;
-import com.study.contactapi.dto.LoginBodyDTO;
-import com.study.contactapi.dto.LoginResponseDTO;
-import com.study.contactapi.http.exceptions.ContactNotFoundException;
 import com.study.contactapi.http.exceptions.UserAlreadyExistsException;
 import com.study.contactapi.infra.security.TokenService;
 import com.study.contactapi.mail.EmailService;
