@@ -103,7 +103,6 @@ public class ContactServiceTest {
     String contactId = "fake-id";
 
     when(contactRepository.findByIdAndUserId(contactId, userId)).thenReturn(Optional.empty());
-
  
     Exception exception = Assertions.assertThrows(ContactNotFoundException.class, () -> this.contactService.findContactById(contactId, userId));
     
