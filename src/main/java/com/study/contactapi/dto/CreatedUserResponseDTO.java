@@ -2,6 +2,7 @@ package com.study.contactapi.dto;
 
 import com.study.contactapi.domain.user.User;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class CreatedUserResponseDTO {
   private String first_name;
   private String last_name;
