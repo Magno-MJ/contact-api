@@ -17,9 +17,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController()
 @RequestMapping("/user")
+@Tag(name = "User Controller", description = "Controller that manages the user information")
 public class UserController {
   @Autowired
   private UserService userService;

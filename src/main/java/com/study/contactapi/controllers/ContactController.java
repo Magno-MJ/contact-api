@@ -29,9 +29,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/contact")
+@Tag(name = "Contact Controller", description = "Controller that manages the user contacts")
 public class ContactController {
   @Autowired
   private ContactService contactService;
