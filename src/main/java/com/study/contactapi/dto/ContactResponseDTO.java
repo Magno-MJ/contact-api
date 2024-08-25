@@ -7,8 +7,10 @@ import com.study.contactapi.domain.user.Contact;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @EqualsAndHashCode
 public class ContactResponseDTO {
   private String id; 
