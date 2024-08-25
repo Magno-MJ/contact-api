@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 
 public record CreateUserBodyDTO (
   @Email(message = "Invalid email")
+  @NotEmpty(message = "email is required")
   String email,
 
   @NotEmpty(message = "first_name is required")

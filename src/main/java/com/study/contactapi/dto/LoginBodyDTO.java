@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 
 public record LoginBodyDTO (
   @Email(message = "email is invalid")
+  @NotEmpty(message = "email is required")
   String email,
   
 
