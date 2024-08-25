@@ -28,7 +28,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Login {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
