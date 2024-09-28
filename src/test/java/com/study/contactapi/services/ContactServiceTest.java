@@ -28,157 +28,157 @@ import com.study.contactapi.repositories.ContactRepository;
 import com.study.contactapi.utils.data.DataHandler;
 
 public class ContactServiceTest {
-  
-  @Mock
-  private ContactRepository contactRepository;
 
-  @Mock
-  private DataHandler dataMerger;
+    @Mock
+    private ContactRepository contactRepository;
 
-  @Autowired
-  @InjectMocks
-  private ContactService contactService;
+    @Mock
+    private DataHandler dataMerger;
 
-  @BeforeEach
-  void setup() {
-    MockitoAnnotations.openMocks(this);
-  }
+    @Autowired
+    @InjectMocks
+    private ContactService contactService;
 
-  @Test
-  @DisplayName("Should create a contact successfully")
-  void createContact() {
-    CreateContactBodyDTO createContactBodyDTO = new CreateContactBodyDTO("fake name", "fake name", "9999999999");
-    User user = new User();
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
 
-    Contact contact = new Contact(createContactBodyDTO.first_name(), createContactBodyDTO.last_name(), createContactBodyDTO.phone_number(), user);
-    
-    when(contactRepository.save(any())).thenReturn(contact);
+    @Test
+    @DisplayName("Should create a contact successfully")
+    void createContact() {
+        CreateContactBodyDTO createContactBodyDTO = new CreateContactBodyDTO("fake name", "fake name", "9999999999");
+        User user = new User();
 
-    ContactResponseDTO createContactResponseDTO = this.contactService.createContact(createContactBodyDTO, user);
+        Contact contact = new Contact(createContactBodyDTO.first_name(), createContactBodyDTO.last_name(), createContactBodyDTO.phone_number(), user);
 
-    verify(contactRepository, times(1)).save(contact);
+        when(contactRepository.save(any())).thenReturn(contact);
 
-    assertThat(createContactResponseDTO).isEqualTo(new ContactResponseDTO(contact));
-  }
+        ContactResponseDTO createContactResponseDTO = this.contactService.createContact(createContactBodyDTO, user);
 
+        verify(contactRepository, times(1)).save(contact);
 
-  @Test
-  @DisplayName("Should create a contact successfully")
-  void findAllContacts() {
-    User user = new User();
-
-    Contact contact = new Contact(user.getFirst_name(), user.getLast_name(), "9999999999", user);
-    
-    when(contactRepository.findAllByContactUserId(user.getId())).thenReturn(List.of(contact));
-
-    List<ContactResponseDTO> findAllContactsResponseDto = this.contactService.findAllContacts(user.getId());
-
-    verify(contactRepository, times(1)).findAllByContactUserId(user.getId());
-
-    assertThat(findAllContactsResponseDto).isEqualTo(List.of(new ContactResponseDTO(contact)));
-  }
-
-  @Test
-  @DisplayName("Should find contact by id successfully")
-  void findContactByIdCase1() {
-    User user = new User();
-
-    Contact contact = new Contact();
-    contact.setContact_user(user);
-
-    when(contactRepository.findByIdAndUserId(contact.getId(), user.getId())).thenReturn(Optional.of(contact));
-
-    ContactResponseDTO contactResponseDTO = this.contactService.findContactById(contact.getId(), user.getId());
-
-    verify(contactRepository, times(1)).findByIdAndUserId(contact.getId(), user.getId());
-
-    assertThat(contactResponseDTO).isEqualTo(new ContactResponseDTO(contact));
-  }
+        assertThat(createContactResponseDTO).isEqualTo(new ContactResponseDTO(contact));
+    }
 
 
-  @Test
-  @DisplayName("Should throw if the contact was not found")
-  void findContactByIdCase2() {
-    String userId = "fake-id";
-    String contactId = "fake-id";
+    @Test
+    @DisplayName("Should create a contact successfully")
+    void findAllContacts() {
+        User user = new User();
 
-    when(contactRepository.findByIdAndUserId(contactId, userId)).thenReturn(Optional.empty());
- 
-    Exception exception = Assertions.assertThrows(ContactNotFoundException.class, () -> this.contactService.findContactById(contactId, userId));
-    
-    Assertions.assertEquals("Contact not found", exception.getMessage());
-  }
+        Contact contact = new Contact(user.getFirst_name(), user.getLast_name(), "9999999999", user);
 
-  @Test
-  @DisplayName("Should update contact by id successfully")
-  void updateContactByIdCase1() {
-    User user = new User();
+        when(contactRepository.findAllByContactUserId(user.getId())).thenReturn(List.of(contact));
 
-    Contact contact = new Contact();
-    contact.setContact_user(user);
+        List<ContactResponseDTO> findAllContactsResponseDto = this.contactService.findAllContacts(user.getId());
 
-    UpdateContactBodyDTO updateContactBodyDTO = new UpdateContactBodyDTO();
+        verify(contactRepository, times(1)).findAllByContactUserId(user.getId());
 
-    when(contactRepository.findByIdAndUserId(contact.getId(), user.getId())).thenReturn(Optional.of(contact));
+        assertThat(findAllContactsResponseDto).isEqualTo(List.of(new ContactResponseDTO(contact)));
+    }
 
-    when(dataMerger.mergeData(contact, updateContactBodyDTO)).thenReturn(contact);
+    @Test
+    @DisplayName("Should find contact by id successfully")
+    void findContactByIdCase1() {
+        User user = new User();
 
-    when(contactRepository.save(contact)).thenReturn(contact);
+        Contact contact = new Contact();
+        contact.setContact_user(user);
 
-    ContactResponseDTO contactResponseDTO = this.contactService.updateContactById(contact.getId(), user.getId(), updateContactBodyDTO);
+        when(contactRepository.findByIdAndUserId(contact.getId(), user.getId())).thenReturn(Optional.of(contact));
 
-    verify(contactRepository, times(1)).findByIdAndUserId(contact.getId(), user.getId());
-    verify(dataMerger, times(1)).mergeData(contact, updateContactBodyDTO);
-    verify(contactRepository, times(1)).save(contact);
+        ContactResponseDTO contactResponseDTO = this.contactService.findContactById(contact.getId(), user.getId());
 
-    assertThat(contactResponseDTO).isEqualTo(new ContactResponseDTO(contact));
-  }
+        verify(contactRepository, times(1)).findByIdAndUserId(contact.getId(), user.getId());
+
+        assertThat(contactResponseDTO).isEqualTo(new ContactResponseDTO(contact));
+    }
 
 
-  @Test
-  @DisplayName("Should throw if the contact was not found")
-  void updateContactByIdCase2() {
-    String userId = "fake-id";
-    String contactId = "fake-id";
+    @Test
+    @DisplayName("Should throw if the contact was not found")
+    void findContactByIdCase2() {
+        String userId = "fake-id";
+        String contactId = "fake-id";
 
-    when(contactRepository.findByIdAndUserId(contactId, userId)).thenReturn(Optional.empty());
+        when(contactRepository.findByIdAndUserId(contactId, userId)).thenReturn(Optional.empty());
 
-    UpdateContactBodyDTO updateContactBodyDTO = new UpdateContactBodyDTO();
+        Exception exception = Assertions.assertThrows(ContactNotFoundException.class, () -> this.contactService.findContactById(contactId, userId));
 
-    Exception exception = Assertions.assertThrows(ContactNotFoundException.class, () -> this.contactService.updateContactById(contactId, userId, updateContactBodyDTO));
-    
-    Assertions.assertEquals("Contact not found", exception.getMessage());
-  }
+        Assertions.assertEquals("Contact not found", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should update contact by id successfully")
+    void updateContactByIdCase1() {
+        User user = new User();
+
+        Contact contact = new Contact();
+        contact.setContact_user(user);
+
+        UpdateContactBodyDTO updateContactBodyDTO = new UpdateContactBodyDTO();
+
+        when(contactRepository.findByIdAndUserId(contact.getId(), user.getId())).thenReturn(Optional.of(contact));
+
+        when(dataMerger.mergeData(contact, updateContactBodyDTO)).thenReturn(contact);
+
+        when(contactRepository.save(contact)).thenReturn(contact);
+
+        ContactResponseDTO contactResponseDTO = this.contactService.updateContactById(contact.getId(), user.getId(), updateContactBodyDTO);
+
+        verify(contactRepository, times(1)).findByIdAndUserId(contact.getId(), user.getId());
+        verify(dataMerger, times(1)).mergeData(contact, updateContactBodyDTO);
+        verify(contactRepository, times(1)).save(contact);
+
+        assertThat(contactResponseDTO).isEqualTo(new ContactResponseDTO(contact));
+    }
 
 
-  @Test
-  @DisplayName("Should delete contact by id successfully")
-  void deleteContactByIdCase1() {
-    User user = new User();
+    @Test
+    @DisplayName("Should throw if the contact was not found")
+    void updateContactByIdCase2() {
+        String userId = "fake-id";
+        String contactId = "fake-id";
 
-    Contact contact = new Contact();
-    contact.setContact_user(user);
+        when(contactRepository.findByIdAndUserId(contactId, userId)).thenReturn(Optional.empty());
 
-    when(contactRepository.findByIdAndUserId(contact.getId(), user.getId())).thenReturn(Optional.of(contact));
+        UpdateContactBodyDTO updateContactBodyDTO = new UpdateContactBodyDTO();
 
-    ContactResponseDTO contactResponseDTO = this.contactService.deleteContactById(contact.getId(), user.getId());
+        Exception exception = Assertions.assertThrows(ContactNotFoundException.class, () -> this.contactService.updateContactById(contactId, userId, updateContactBodyDTO));
 
-    verify(contactRepository, times(1)).delete(contact);
-
-    assertThat(contactResponseDTO).isEqualTo(new ContactResponseDTO(contact));
-  }
+        Assertions.assertEquals("Contact not found", exception.getMessage());
+    }
 
 
-  @Test
-  @DisplayName("Should throw if the contact was not found")
-  void deleteContactByIdCase2() {
-    String userId = "fake-id";
-    String contactId = "fake-id";
+    @Test
+    @DisplayName("Should delete contact by id successfully")
+    void deleteContactByIdCase1() {
+        User user = new User();
 
-    when(contactRepository.findByIdAndUserId(contactId, userId)).thenReturn(Optional.empty());
- 
-    Exception exception = Assertions.assertThrows(ContactNotFoundException.class, () -> this.contactService.findContactById(contactId, userId));
-    
-    Assertions.assertEquals("Contact not found", exception.getMessage());
-  }
+        Contact contact = new Contact();
+        contact.setContact_user(user);
+
+        when(contactRepository.findByIdAndUserId(contact.getId(), user.getId())).thenReturn(Optional.of(contact));
+
+        ContactResponseDTO contactResponseDTO = this.contactService.deleteContactById(contact.getId(), user.getId());
+
+        verify(contactRepository, times(1)).delete(contact);
+
+        assertThat(contactResponseDTO).isEqualTo(new ContactResponseDTO(contact));
+    }
+
+
+    @Test
+    @DisplayName("Should throw if the contact was not found")
+    void deleteContactByIdCase2() {
+        String userId = "fake-id";
+        String contactId = "fake-id";
+
+        when(contactRepository.findByIdAndUserId(contactId, userId)).thenReturn(Optional.empty());
+
+        Exception exception = Assertions.assertThrows(ContactNotFoundException.class, () -> this.contactService.findContactById(contactId, userId));
+
+        Assertions.assertEquals("Contact not found", exception.getMessage());
+    }
 }

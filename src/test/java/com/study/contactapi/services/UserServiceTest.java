@@ -31,75 +31,75 @@ import com.study.contactapi.repositories.LoginRepository;
 import com.study.contactapi.repositories.UserRepository;
 
 public class UserServiceTest {
-  @Mock
-  private LoginRepository loginRepository;
+    @Mock
+    private LoginRepository loginRepository;
 
-  @Mock
-  private UserRepository userRepository;
+    @Mock
+    private UserRepository userRepository;
 
-  @Mock
-  private AccountConfirmationTokenRepository accountConfirmationTokenRepository;
+    @Mock
+    private AccountConfirmationTokenRepository accountConfirmationTokenRepository;
 
-  @Mock
-  private TokenService tokenService;
+    @Mock
+    private TokenService tokenService;
 
-  @Mock
-  private PasswordEncoder passwordEncoder;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
-  @Mock
-  private EmailService emailService;
+    @Mock
+    private EmailService emailService;
 
-  @Autowired
-  @InjectMocks
-  private UserService userService;
+    @Autowired
+    @InjectMocks
+    private UserService userService;
 
-  @BeforeEach
-  void setup() {
-    MockitoAnnotations.openMocks(this);
-  }
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
 
-  @Test
-  @DisplayName("Should create user successfully")
-  void createUserCase1() {
-    CreateUserBodyDTO createUserDto = new CreateUserBodyDTO("fake@mail.com", "fake name", "fake name", "fake password");
+    @Test
+    @DisplayName("Should create user successfully")
+    void createUserCase1() {
+        CreateUserBodyDTO createUserDto = new CreateUserBodyDTO("fake@mail.com", "fake name", "fake name", "fake password");
 
-    when(loginRepository.findByEmail(createUserDto.email())).thenReturn(Optional.empty());
+        when(loginRepository.findByEmail(createUserDto.email())).thenReturn(Optional.empty());
 
-    String confirmationToken = "fake-token";
+        String confirmationToken = "fake-token";
 
-    when(tokenService.generateConfirmationToken(any())).thenReturn(confirmationToken);
+        when(tokenService.generateConfirmationToken(any())).thenReturn(confirmationToken);
 
-    String encryptedPassword = "fake-encrypted-password";
+        String encryptedPassword = "fake-encrypted-password";
 
-    when(passwordEncoder.encode(createUserDto.password())).thenReturn(encryptedPassword);
+        when(passwordEncoder.encode(createUserDto.password())).thenReturn(encryptedPassword);
 
-    Login createdLogin = new Login(createUserDto.email(), encryptedPassword);
-    User createdUser = new User(createUserDto.first_name(), createUserDto.last_name(), createdLogin);
+        Login createdLogin = new Login(createUserDto.email(), encryptedPassword);
+        User createdUser = new User(createUserDto.first_name(), createUserDto.last_name(), createdLogin);
 
-    AccountConfirmationToken accountConfirmationToken = new AccountConfirmationToken(confirmationToken, createdLogin, true);
+        AccountConfirmationToken accountConfirmationToken = new AccountConfirmationToken(confirmationToken, createdLogin, true);
 
-    CreatedUserResponseDTO createdUserResponseDTO = this.userService.createUser(createUserDto);
+        CreatedUserResponseDTO createdUserResponseDTO = this.userService.createUser(createUserDto);
 
-    verify(loginRepository, times(1)).findByEmail(createUserDto.email());
-    verify(passwordEncoder, times(1)).encode(createUserDto.password());
-    verify(userRepository, times(1)).save(createdUser);
-    verify(tokenService, times(1)).generateConfirmationToken(createdLogin.getId());
-    verify(accountConfirmationTokenRepository, times(1)).save(accountConfirmationToken);
+        verify(loginRepository, times(1)).findByEmail(createUserDto.email());
+        verify(passwordEncoder, times(1)).encode(createUserDto.password());
+        verify(userRepository, times(1)).save(createdUser);
+        verify(tokenService, times(1)).generateConfirmationToken(createdLogin.getId());
+        verify(accountConfirmationTokenRepository, times(1)).save(accountConfirmationToken);
 
-    assertThat(createdUserResponseDTO).isEqualTo(new CreatedUserResponseDTO(createdUser));
-  }
+        assertThat(createdUserResponseDTO).isEqualTo(new CreatedUserResponseDTO(createdUser));
+    }
 
-  @Test
-  @DisplayName("Should throw if user already exists")
-  void createUserCase2() {
-    CreateUserBodyDTO createUserDto = new CreateUserBodyDTO("fake@mail.com", "fake name", "fake name", "fake password");
+    @Test
+    @DisplayName("Should throw if user already exists")
+    void createUserCase2() {
+        CreateUserBodyDTO createUserDto = new CreateUserBodyDTO("fake@mail.com", "fake name", "fake name", "fake password");
 
-    Login login = new Login();
+        Login login = new Login();
 
-    when(loginRepository.findByEmail(createUserDto.email())).thenReturn(Optional.of(login));
-    
-    Exception exception = Assertions.assertThrows(UserAlreadyExistsException.class, () -> this.userService.createUser(createUserDto));
-    
-    Assertions.assertEquals("User already exists", exception.getMessage());
-  }
+        when(loginRepository.findByEmail(createUserDto.email())).thenReturn(Optional.of(login));
+
+        Exception exception = Assertions.assertThrows(UserAlreadyExistsException.class, () -> this.userService.createUser(createUserDto));
+
+        Assertions.assertEquals("User already exists", exception.getMessage());
+    }
 }
