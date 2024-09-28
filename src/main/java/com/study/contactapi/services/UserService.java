@@ -18,45 +18,45 @@ import com.study.contactapi.repositories.UserRepository;
 
 @Service
 public class UserService {
-  @Autowired
-  private LoginRepository loginRepository;
+    @Autowired
+    private LoginRepository loginRepository;
 
-  @Autowired
-  private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-  @Autowired
-  private AccountConfirmationTokenRepository accountConfirmationTokenRepository;
+    @Autowired
+    private AccountConfirmationTokenRepository accountConfirmationTokenRepository;
 
-  @Autowired
-  private TokenService tokenService;
+    @Autowired
+    private TokenService tokenService;
 
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-  @Autowired
-  private EmailService emailService;
+    @Autowired
+    private EmailService emailService;
 
-  public CreatedUserResponseDTO createUser(CreateUserBodyDTO createUserDto) {
-    boolean userAlreadyExists = loginRepository.findByEmail(createUserDto.email()).isPresent();
+    public CreatedUserResponseDTO createUser(CreateUserBodyDTO createUserDto) {
+        boolean userAlreadyExists = loginRepository.findByEmail(createUserDto.email()).isPresent();
 
-    if (userAlreadyExists) {
-      throw new UserAlreadyExistsException();
+        if (userAlreadyExists) {
+            throw new UserAlreadyExistsException();
+        }
+
+        Login createdLogin = new Login(createUserDto.email(), passwordEncoder.encode(createUserDto.password()));
+
+        User createdUser = new User(createUserDto.first_name(), createUserDto.last_name(), createdLogin);
+
+        userRepository.save(createdUser);
+
+        String confirmationToken = this.tokenService.generateConfirmationToken(createdLogin.getId());
+
+        AccountConfirmationToken accountConfirmationToken = new AccountConfirmationToken(confirmationToken, createdLogin, true);
+
+        accountConfirmationTokenRepository.save(accountConfirmationToken);
+
+        this.emailService.sendAccountConfirmationMail(createdLogin.getEmail(), accountConfirmationToken.getToken());
+
+        return new CreatedUserResponseDTO(createdUser);
     }
-
-    Login createdLogin = new Login(createUserDto.email(), passwordEncoder.encode(createUserDto.password()));
-
-    User createdUser = new User(createUserDto.first_name(), createUserDto.last_name(), createdLogin);
-
-    userRepository.save(createdUser);
-
-    String confirmationToken = this.tokenService.generateConfirmationToken(createdLogin.getId());
-
-    AccountConfirmationToken accountConfirmationToken = new AccountConfirmationToken(confirmationToken, createdLogin, true);
-    
-    accountConfirmationTokenRepository.save(accountConfirmationToken);
-    
-    this.emailService.sendAccountConfirmationMail(createdLogin.getEmail(), accountConfirmationToken.getToken());
-
-    return new CreatedUserResponseDTO(createdUser);
-  }
 }

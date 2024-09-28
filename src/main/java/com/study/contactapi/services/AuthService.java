@@ -23,76 +23,78 @@ import com.study.contactapi.repositories.LoginRepository;
 
 @Service
 public class AuthService {
-  @Autowired
-  AccountConfirmationTokenRepository accountConfirmationTokenRepository;
+    @Autowired
+    AccountConfirmationTokenRepository accountConfirmationTokenRepository;
 
-  @Autowired
-  private TokenService tokenService;
+    @Autowired
+    private TokenService tokenService;
 
-  @Autowired
-  private LoginRepository loginRepository;
+    @Autowired
+    private LoginRepository loginRepository;
 
-  @Autowired
-  private EmailService emailService;
+    @Autowired
+    private EmailService emailService;
 
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
-  public LoginResponseDTO login(@RequestBody LoginBodyDTO body){
-    Login login = this.loginRepository.findByEmail(body.email()).orElseThrow(() -> new UserNotFoundException());
-    
-    if (login.getAccount_activated_at() == null) {
-      throw new AccountNotActivatedException();
+    public LoginResponseDTO login(@RequestBody LoginBodyDTO body) {
+        Login login = this.loginRepository.findByEmail(body.email()).orElseThrow(UserNotFoundException::new);
+
+        if (login.getAccount_activated_at() == null) {
+            throw new AccountNotActivatedException();
+        }
+
+        if (passwordEncoder.matches(body.password(), login.getPassword())) {
+            String token = this.tokenService.generateToken(login);
+
+            return new LoginResponseDTO(token);
+        }
+
+        throw new WrongCredentialsException();
     }
 
-    if (passwordEncoder.matches(body.password(), login.getPassword())) {
-      String token = this.tokenService.generateToken(login);
 
-      return new LoginResponseDTO(token);
+    public void confirmAccount(String accountConfirmationToken) {
+        AccountConfirmationToken confirmationToken = this.accountConfirmationTokenRepository.findByToken(accountConfirmationToken);
+
+        if (confirmationToken == null) {
+            throw new ConfirmationTokenNotFoundException();
+        }
+        ;
+
+        if (!confirmationToken.is_active()) {
+            throw new ConfirmationTokenIsNotActiveException();
+        }
+        ;
+
+        String loginId = this.tokenService.validateToken(accountConfirmationToken);
+
+        if (loginId == null) {
+            this.accountConfirmationTokenRepository.disableByToken(accountConfirmationToken);
+
+            throw new InvalidTokenException();
+        }
+
+        this.loginRepository.activateUserLoginById(loginId);
+
+        this.accountConfirmationTokenRepository.disableByToken(accountConfirmationToken);
     }
 
-    throw new WrongCredentialsException();
-  }
+    public void resendAccountConfirmationToken(ResendAccountConfirmationTokenBodyDto resendAccountConfirmationTokenBodyDto) {
+        Login login = loginRepository.findByEmail(resendAccountConfirmationTokenBodyDto.email()).orElseThrow(UserNotFoundException::new);
 
+        String loginId = login.getId();
 
-  public void confirmAccount(String accountConfirmationToken) {
-    AccountConfirmationToken confirmationToken = this.accountConfirmationTokenRepository.findByToken(accountConfirmationToken);
+        String confirmationToken = this.tokenService.generateConfirmationToken(loginId);
 
-    if (confirmationToken == null) {
-      throw new ConfirmationTokenNotFoundException();
-    };
+        this.accountConfirmationTokenRepository.disableByLoginId(loginId);
 
-    if (!confirmationToken.is_active()) {
-      throw new ConfirmationTokenIsNotActiveException();
-    };
+        AccountConfirmationToken newAccountActivationToken = new AccountConfirmationToken(confirmationToken, login, true);
 
-    String loginId = this.tokenService.validateToken(accountConfirmationToken);
+        this.accountConfirmationTokenRepository.save(newAccountActivationToken);
 
-    if (loginId == null) {
-      this.accountConfirmationTokenRepository.disableByToken(accountConfirmationToken);
-      
-      throw new InvalidTokenException();
+        this.emailService.sendAccountConfirmationMail(login.getEmail(), confirmationToken);
     }
-
-    this.loginRepository.activateUserLoginById(loginId);
-
-    this.accountConfirmationTokenRepository.disableByToken(accountConfirmationToken);
-  }
-
-  public void resendAccountConfirmationToken(ResendAccountConfirmationTokenBodyDto resendAccountConfirmationTokenBodyDto) {
-    Login login = loginRepository.findByEmail(resendAccountConfirmationTokenBodyDto.email()).orElseThrow(() -> new UserNotFoundException());
-
-    String loginId = login.getId();
-
-    String confirmationToken = this.tokenService.generateConfirmationToken(loginId);
-
-    this.accountConfirmationTokenRepository.disableByLoginId(loginId);
-
-    AccountConfirmationToken newAccountActivationToken = new AccountConfirmationToken(confirmationToken, login, true);
-
-    this.accountConfirmationTokenRepository.save(newAccountActivationToken);
-
-    this.emailService.sendAccountConfirmationMail(login.getEmail(), confirmationToken);
-  }
 }

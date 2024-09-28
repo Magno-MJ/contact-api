@@ -17,45 +17,44 @@ import com.study.contactapi.utils.data.DataHandler;
 @Service
 public class ContactService {
 
-  @Autowired
-  private ContactRepository contactRepository;
+    @Autowired
+    private ContactRepository contactRepository;
 
-  @Autowired
-  private DataHandler dataMerger;
+    @Autowired
+    private DataHandler dataMerger;
 
-  public ContactResponseDTO createContact(CreateContactBodyDTO createContactBodyDTO, User user) {
-    Contact contact = new Contact(createContactBodyDTO.first_name(), createContactBodyDTO.last_name(), createContactBodyDTO.phone_number(), user);
+    public ContactResponseDTO createContact(CreateContactBodyDTO createContactBodyDTO, User user) {
+        Contact contact = new Contact(createContactBodyDTO.first_name(), createContactBodyDTO.last_name(), createContactBodyDTO.phone_number(), user);
 
-    Contact createdContact = this.contactRepository.save(contact);
-    
-    return new ContactResponseDTO(createdContact);
-  }
+        Contact createdContact = this.contactRepository.save(contact);
 
-  public List<ContactResponseDTO> findAllContacts(String userId) {
-    List<ContactResponseDTO> contactsFound = this.contactRepository.findAllByContactUserId(userId).stream().map((contact) -> new ContactResponseDTO(contact)).toList();
+        return new ContactResponseDTO(createdContact);
+    }
 
-    return contactsFound;
-  }
+    public List<ContactResponseDTO> findAllContacts(String userId) {
 
-  public ContactResponseDTO findContactById(String contactId, String userId) {
-    Contact contactFound = this.contactRepository.findByIdAndUserId(contactId, userId).orElseThrow(() -> new ContactNotFoundException());
+        return this.contactRepository.findAllByContactUserId(userId).stream().map(ContactResponseDTO::new).toList();
+    }
 
-    return new ContactResponseDTO(contactFound);
-  }
+    public ContactResponseDTO findContactById(String contactId, String userId) {
+        Contact contactFound = this.contactRepository.findByIdAndUserId(contactId, userId).orElseThrow(ContactNotFoundException::new);
 
-  public ContactResponseDTO updateContactById(String contactId, String userId, UpdateContactBodyDTO updateContactBodyDTO) {
-    Contact contactFound = this.contactRepository.findByIdAndUserId(contactId, userId).orElseThrow(() -> new ContactNotFoundException());
+        return new ContactResponseDTO(contactFound);
+    }
 
-    Contact updatedContact = this.contactRepository.save(this.dataMerger.mergeData(contactFound, updateContactBodyDTO));
+    public ContactResponseDTO updateContactById(String contactId, String userId, UpdateContactBodyDTO updateContactBodyDTO) {
+        Contact contactFound = this.contactRepository.findByIdAndUserId(contactId, userId).orElseThrow(ContactNotFoundException::new);
 
-    return new ContactResponseDTO(updatedContact);
-  }
+        Contact updatedContact = this.contactRepository.save(this.dataMerger.mergeData(contactFound, updateContactBodyDTO));
 
-  public ContactResponseDTO deleteContactById(String contactId, String userId) {
-    Contact contactFound = this.contactRepository.findByIdAndUserId(contactId, userId).orElseThrow(() -> new ContactNotFoundException());
-    
-    this.contactRepository.delete(contactFound);
+        return new ContactResponseDTO(updatedContact);
+    }
 
-    return new ContactResponseDTO(contactFound);
-  }
+    public ContactResponseDTO deleteContactById(String contactId, String userId) {
+        Contact contactFound = this.contactRepository.findByIdAndUserId(contactId, userId).orElseThrow(ContactNotFoundException::new);
+
+        this.contactRepository.delete(contactFound);
+
+        return new ContactResponseDTO(contactFound);
+    }
 }
