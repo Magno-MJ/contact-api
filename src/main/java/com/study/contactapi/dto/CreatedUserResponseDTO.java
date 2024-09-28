@@ -13,18 +13,18 @@ import lombok.Setter;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class CreatedUserResponseDTO {
-  @Schema(description = "User first name", example = "John")
-  private String first_name;
+    @Schema(description = "User first name", example = "John")
+    private String first_name;
 
-  @Schema(description = "User last name", example = "Doe")
-  private String last_name;
+    @Schema(description = "User last name", example = "Doe")
+    private String last_name;
 
-  @Schema(description = "User email", example = "john@mail.com")
-  private String email;
+    @Schema(description = "User email", example = "john@mail.com")
+    private String email;
 
-  public CreatedUserResponseDTO(User user) {
-    this.first_name = user.getFirst_name();
-    this.last_name = user.getLast_name();
-    this.email = user.getLogin().getEmail();
-  }
+    public CreatedUserResponseDTO(User user) {
+        this.first_name = user.getFirst_name();
+        this.last_name = user.getLast_name();
+        this.email = user.getLogin().getEmail();
+    }
 }
