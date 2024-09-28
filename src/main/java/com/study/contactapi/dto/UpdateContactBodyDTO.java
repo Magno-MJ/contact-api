@@ -23,7 +23,6 @@ public class UpdateContactBodyDTO {
     String last_name;
 
     @Schema(description = "Contact phone number", example = "99999999999")
-
     @Size(min = 11, max = 11, message = "phone_number is invalid")
     String phone_number;
 }
