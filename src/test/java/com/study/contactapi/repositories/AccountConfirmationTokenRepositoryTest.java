@@ -64,12 +64,11 @@ class AccountConfirmationTokenRepositoryTest {
         AccountConfirmationToken token = this.accountConfirmationTokenRepository.findByToken(accountConfirmToken);
 
         assertThat(token.is_active()).isFalse();
-        
+
     }
 
-    private AccountConfirmationToken createAccountConfirmationToken(AccountConfirmationToken accountConfirmationToken) {
+    private void createAccountConfirmationToken(AccountConfirmationToken accountConfirmationToken) {
         this.entityManager.persist(accountConfirmationToken);
-        return accountConfirmationToken;
     }
 }
 
