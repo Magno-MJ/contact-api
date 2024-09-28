@@ -4,6 +4,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,32 +25,32 @@ import lombok.Setter;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Contact {
-  @Id()
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private String id;
-  private String first_name;
+    @Id()
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+    private String first_name;
 
-  private String last_name;
+    private String last_name;
 
-  private String phone_number;
+    private String phone_number;
 
-  @CreationTimestamp
-  @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE default NOW()")
-  private Date created_at;
+    @CreationTimestamp
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE default NOW()")
+    private Date created_at;
 
-  @UpdateTimestamp
-  @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE default NOW()")
-  private Date updated_at;
+    @UpdateTimestamp
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE default NOW()")
+    private Date updated_at;
 
 
-  @ManyToOne(optional = false)
-  @PrimaryKeyJoinColumn(name = "contact_user_id", referencedColumnName = "id")
-  private User contact_user;
+    @ManyToOne(optional = false)
+    @PrimaryKeyJoinColumn(name = "contact_user_id", referencedColumnName = "id")
+    private User contact_user;
 
-  public Contact(String first_name, String last_name, String phone_number, User user) {
-    this.first_name = first_name;
-    this.last_name = last_name;
-    this.phone_number = phone_number;
-    this.contact_user = user;
-  }
+    public Contact(String first_name, String last_name, String phone_number, User user) {
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.phone_number = phone_number;
+        this.contact_user = user;
+    }
 }

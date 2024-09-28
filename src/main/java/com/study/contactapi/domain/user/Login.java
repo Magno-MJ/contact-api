@@ -30,34 +30,34 @@ import lombok.Setter;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Login {
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private String id;
-  
-  @Column(unique = true)
-  private String email;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
-  private String password;
+    @Column(unique = true)
+    private String email;
 
-  @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE default NULL")
-  private Date account_activated_at;
-  
-  @CreationTimestamp
-  @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE default NOW()")
-  private Date created_at;
+    private String password;
 
-  @UpdateTimestamp
-  @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE default NOW()")
-  private Date updated_at;
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE default NULL")
+    private Date account_activated_at;
 
-  @OneToOne(mappedBy = "login")
-  private User user;
+    @CreationTimestamp
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE default NOW()")
+    private Date created_at;
 
-  @OneToMany( cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "login")
-  private List<AccountConfirmationToken> account_confirmation_token;
+    @UpdateTimestamp
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE default NOW()")
+    private Date updated_at;
 
-  public Login(String email, String password) {
-    this.email = email;
-    this.password = password;
-  }
+    @OneToOne(mappedBy = "login")
+    private User user;
+
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "login")
+    private List<AccountConfirmationToken> account_confirmation_token;
+
+    public Login(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 }

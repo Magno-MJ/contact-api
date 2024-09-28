@@ -15,6 +15,7 @@ import jakarta.persistence.OneToOne;
 
 import java.util.Date;
 import java.util.List;
+
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -30,32 +31,32 @@ import lombok.Setter;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class User {
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
-  private String first_name;
+    private String first_name;
 
-  private String last_name;
+    private String last_name;
 
-  @CreationTimestamp
-  @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE default NOW()")
-  private Date created_at;
+    @CreationTimestamp
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE default NOW()")
+    private Date created_at;
 
-  @UpdateTimestamp
-  @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE default NOW()")
-  private Date updated_at;
+    @UpdateTimestamp
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE default NOW()")
+    private Date updated_at;
 
-  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "login_id", referencedColumnName = "id")
-  private Login login;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "login_id", referencedColumnName = "id")
+    private Login login;
 
-  @OneToMany( cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "contact_user")
-  private List<Contact> contact;
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "contact_user")
+    private List<Contact> contact;
 
-  public User(String first_name, String last_name, Login login) {
-    this.first_name = first_name;
-    this.last_name = last_name;
-    this.login = login;
-  }
+    public User(String first_name, String last_name, Login login) {
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.login = login;
+    }
 }
