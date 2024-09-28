@@ -32,9 +32,9 @@ public class SecurityFilter extends OncePerRequestFilter {
         var token = this.recoverToken(request);
         var email = tokenService.validateToken(token);
 
-        if (email != null){
+        if (email != null) {
             Optional<Login> login = loginRepository.findByEmail(email);
-            
+
             if (login.isEmpty()) {
                 throw new UserNotFoundException();
             }
@@ -44,13 +44,13 @@ public class SecurityFilter extends OncePerRequestFilter {
             var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-        
+
         filterChain.doFilter(request, response);
     }
 
-    private String recoverToken(HttpServletRequest request){
+    private String recoverToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");
-        if(authHeader == null) return null;
+        if (authHeader == null) return null;
         return authHeader.replace("Bearer ", "");
     }
 }
