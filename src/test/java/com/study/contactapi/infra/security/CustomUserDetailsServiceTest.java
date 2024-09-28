@@ -23,45 +23,45 @@ import com.study.contactapi.domain.user.Login;
 import com.study.contactapi.repositories.LoginRepository;
 
 public class CustomUserDetailsServiceTest {
-  @Mock
-  private LoginRepository loginRepository;
+    @Mock
+    private LoginRepository loginRepository;
 
-  @Autowired
-  @InjectMocks
-  private CustomUserDetailsService customUserDetailsService;
+    @Autowired
+    @InjectMocks
+    private CustomUserDetailsService customUserDetailsService;
 
-  @BeforeEach
-  void setup() {
-    MockitoAnnotations.openMocks(this);
-  }
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
 
-  @Test
-  @DisplayName("Should load by username successfully")
-  void loadByUserNameCase1() {
-    String userName = "fake@mail.com";
-    String password = "fake-password";
+    @Test
+    @DisplayName("Should load by username successfully")
+    void loadByUserNameCase1() {
+        String userName = "fake@mail.com";
+        String password = "fake-password";
 
-    Login login = new Login(userName, password);
+        Login login = new Login(userName, password);
 
-    when(loginRepository.findByEmail(userName)).thenReturn(Optional.of(login));
+        when(loginRepository.findByEmail(userName)).thenReturn(Optional.of(login));
 
-    UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(userName);
+        UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(userName);
 
-    verify(loginRepository, times(1)).findByEmail(userName);
+        verify(loginRepository, times(1)).findByEmail(userName);
 
-    assertThat(userDetails).isEqualTo(new org.springframework.security.core.userdetails.User(login.getEmail(), login.getPassword(), new ArrayList<>()));
-  }
+        assertThat(userDetails).isEqualTo(new org.springframework.security.core.userdetails.User(login.getEmail(), login.getPassword(), new ArrayList<>()));
+    }
 
 
-  @Test
-  @DisplayName("Should throw if the user was not found")
-  void loadByUserNameCase2() {
-    String userName = "fake@mail.com";
+    @Test
+    @DisplayName("Should throw if the user was not found")
+    void loadByUserNameCase2() {
+        String userName = "fake@mail.com";
 
-    when(loginRepository.findByEmail(userName)).thenReturn(Optional.empty());
+        when(loginRepository.findByEmail(userName)).thenReturn(Optional.empty());
 
-    Exception exception = Assertions.assertThrows(UsernameNotFoundException.class, () ->this.customUserDetailsService.loadUserByUsername(userName));
-    
-    Assertions.assertEquals("User not found", exception.getMessage());
-  }
+        Exception exception = Assertions.assertThrows(UsernameNotFoundException.class, () -> this.customUserDetailsService.loadUserByUsername(userName));
+
+        Assertions.assertEquals("User not found", exception.getMessage());
+    }
 }
