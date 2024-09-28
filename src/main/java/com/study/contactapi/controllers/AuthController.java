@@ -26,59 +26,60 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "Auth Controller", description = "Controller that manages the user account authentication")
 public class AuthController {
-  private final AuthService authService;
+    private final AuthService authService;
 
-  @Operation(description = "Sign in", method = "POST")
-  @ApiResponses(value = {
-    @ApiResponse(
-      responseCode = "200", 
-      description = "Ok",
-      content = @Content(
-        mediaType = "application/json", 
-        schema = @Schema(implementation = LoginResponseDTO.class)
-      )
-    ),
-    @ApiResponse(responseCode = "400", description = "Account is not activated | The credentials are wrong", content = @Content(mediaType = "application/json")),
-    @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json")),
-  })
-  @PostMapping("/login")
-  public ResponseEntity<LoginResponseDTO> login(@Validated @RequestBody LoginBodyDTO loginBodyDto){
-    LoginResponseDTO loginResponseDto = this.authService.login(loginBodyDto);
+    @Operation(description = "Sign in", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Ok",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = LoginResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "Account is not activated | The credentials are wrong", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json")),
+    })
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@Validated @RequestBody LoginBodyDTO loginBodyDto) {
+        LoginResponseDTO loginResponseDto = this.authService.login(loginBodyDto);
 
-    return ResponseEntity.ok(loginResponseDto);
-  }
+        return ResponseEntity.ok(loginResponseDto);
+    }
 
-  @Operation(description = "Confirm user account", method = "POST")
-  @ApiResponses(value = {
-    @ApiResponse(
-      responseCode = "200", 
-      description = "Ok", 
-      content = @Content(
-        mediaType = "application/json"
-      )
-    ),
-    @ApiResponse(responseCode = "400", description = "Confirmation token is not active", content = @Content(mediaType = "application/json")),
-    @ApiResponse(responseCode = "403", description = "Invalid token", content = @Content(mediaType = "application/json")),
-    @ApiResponse(responseCode = "404", description = "Confirmation token not found", content = @Content(mediaType = "application/json"))
-  })
-  @PostMapping("/confirm/{accountConfirmationToken}")
-  public void confirmAccount(@PathVariable String accountConfirmationToken) {
-    this.authService.confirmAccount(accountConfirmationToken);
-  }
+    @Operation(description = "Confirm user account", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Ok",
+                    content = @Content(
+                            mediaType = "application/json"
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "Confirmation token is not active", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "403", description = "Invalid token", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Confirmation token not found", content = @Content(mediaType = "application/json"))
+    })
+    @PostMapping("/confirm/{accountConfirmationToken}")
+    public void confirmAccount(@PathVariable String accountConfirmationToken) {
+        System.out.println(accountConfirmationToken);
+        this.authService.confirmAccount(accountConfirmationToken);
+    }
 
-  @Operation(description = "Resend account confirmation token", method = "POST")
-  @ApiResponses(value = {
-    @ApiResponse(
-      responseCode = "200", 
-      description = "Ok",
-      content = @Content(
-        mediaType = "application/json"
-      )
-    ),
-    @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json")),
-  })
-  @PostMapping("/resend-confirmation-token")
-  public void resendAccountConfirmationToken(@Validated @RequestBody ResendAccountConfirmationTokenBodyDto resendAccountConfirmationTokenBodyDto) {
-    this.authService.resendAccountConfirmationToken(resendAccountConfirmationTokenBodyDto);
-  }
+    @Operation(description = "Resend account confirmation token", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Ok",
+                    content = @Content(
+                            mediaType = "application/json"
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json")),
+    })
+    @PostMapping("/resend-confirmation-token")
+    public void resendAccountConfirmationToken(@Validated @RequestBody ResendAccountConfirmationTokenBodyDto resendAccountConfirmationTokenBodyDto) {
+        this.authService.resendAccountConfirmationToken(resendAccountConfirmationTokenBodyDto);
+    }
 }

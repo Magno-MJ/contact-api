@@ -23,25 +23,25 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/user")
 @Tag(name = "User Controller", description = "Controller that manages the user information")
 public class UserController {
-  @Autowired
-  private UserService userService;
+    @Autowired
+    private UserService userService;
 
-  @Operation(description = "Create an user", method = "POST")
-  @ApiResponses(value = {
-    @ApiResponse(
-      responseCode = "201", 
-      description = "Created",
-      content = @Content(
-        mediaType = "application/json", 
-        schema = @Schema(implementation = CreatedUserResponseDTO.class)
-      )
-    ),
-    @ApiResponse(responseCode = "400", description = "User already exists", content = @Content(mediaType = "application/json")),
-  })
-  @PostMapping("/register")
-  public ResponseEntity<CreatedUserResponseDTO> createUser(@Validated @RequestBody CreateUserBodyDTO createUserDto) {
-    CreatedUserResponseDTO createdUser =  userService.createUser(createUserDto);
-    
-    return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
-  }
+    @Operation(description = "Create an user", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Created",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CreatedUserResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "User already exists", content = @Content(mediaType = "application/json")),
+    })
+    @PostMapping("/register")
+    public ResponseEntity<CreatedUserResponseDTO> createUser(@Validated @RequestBody CreateUserBodyDTO createUserDto) {
+        CreatedUserResponseDTO createdUser = userService.createUser(createUserDto);
+
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    }
 }
