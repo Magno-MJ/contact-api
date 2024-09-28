@@ -9,19 +9,17 @@ import com.fasterxml.jackson.databind.ObjectReader;
 
 @Service
 public class DataHandler {
-  @Autowired
-  private ObjectMapper objectMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-  /* https://stackoverflow.com/questions/38424383/how-to-distinguish-between-null-and-not-provided-values-for-partial-updates-in-s */
-  public <T> T  mergeData(Object source, Object target) {
-    ObjectReader readerForUpdating = objectMapper.readerForUpdating(source);
-    
-    try {
-      T merged = readerForUpdating.readValue(objectMapper.convertValue(target, JsonNode.class));
+    /* https://stackoverflow.com/questions/38424383/how-to-distinguish-between-null-and-not-provided-values-for-partial-updates-in-s */
+    public <T> T mergeData(Object source, Object target) {
+        ObjectReader readerForUpdating = objectMapper.readerForUpdating(source);
 
-      return merged;
-    } catch (Exception exception) {
-      return null;
+        try {
+            return readerForUpdating.readValue(objectMapper.convertValue(target, JsonNode.class));
+        } catch (Exception exception) {
+            return null;
+        }
     }
-  }
 }
