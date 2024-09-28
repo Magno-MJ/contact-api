@@ -26,7 +26,7 @@ public class MailBuilder {
         helper.setSubject(subject);
 
         String htmlContent = templateEngine.process(templateName, context);
-        
+
         helper.setText(htmlContent, true);
 
         return mimeMessage;

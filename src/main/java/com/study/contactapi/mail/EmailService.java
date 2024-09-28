@@ -34,11 +34,11 @@ public class EmailService {
 
             String formattedErrorMessage = String.format(
                     """
-                        Failed to %s mail
-                        Data
-                        from: %s, to: %s, subject: %s, template name: %s, context: %s
-                        Error: %s
-                    """,
+                                Failed to %s mail
+                                Data
+                                from: %s, to: %s, subject: %s, template name: %s, context: %s
+                                Error: %s
+                            """,
                     mailAction, from, to, subject, templateName, context.getVariableNames(), exception.getMessage()
             );
 
