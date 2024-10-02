@@ -1,6 +1,7 @@
 package com.study.contactapi.controllers;
 
 import com.study.contactapi.dto.CreateUserBodyDTO;
+import com.study.contactapi.repositories.LoginRepository;
 import com.study.contactapi.repositories.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -9,38 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.springframework.test.context.TestPropertySource;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(locations="classpath:application-test.properties")
 class UserControllerTest {
 
     @LocalServerPort
     private Integer port;
 
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest");@LocalServerPort
-
-    @BeforeAll
-    static void beforeAll() {
-        postgres.start();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        postgres.stop();
-    }
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
+    @Autowired
+    LoginRepository loginRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -48,6 +32,7 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         RestAssured.baseURI = "http://localhost:" + port;
+        loginRepository.deleteAll();
         userRepository.deleteAll();
     }
 
