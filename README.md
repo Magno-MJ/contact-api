@@ -14,5 +14,5 @@ docker compose up --build
 ## 🛠 Technologies
 
 -   **[Java](https://www.java.com/en/)**
--   **[Spring Boot](https://www.djangoproject.com/](https://spring.io/projects/spring-boot))**
+-   **[Spring Boot](https://spring.io/projects/spring-boot)**
 -   **[Docker & Docker Compose](https://www.docker.com/)**
